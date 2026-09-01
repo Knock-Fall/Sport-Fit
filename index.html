@@ -1,0 +1,748 @@
+<!-- Sport-Fit -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sport-Fit | 啞鈴全方位肌力與間歇訓練 (SF-00001)</title>
+  <style>
+    :root {
+      --bg-color: #0b1329;
+      --panel-bg: #1e293b;
+      --card-bg: #162032;
+      --card-active: #243552;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --work-color: #f43f5e;
+      --rest-color: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--accent);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* 頂部部位篩選器 */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .filter-btn {
+      background: var(--panel-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #0b1329;
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* 主要版面佈局 */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 24px;
+      max-width: 1240px;
+      width: 100%;
+    }
+
+    @media (max-width: 960px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 動作卡片網格 */
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .exercise-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      border: 2px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .exercise-card:hover {
+      border-color: #475569;
+    }
+
+    .exercise-card.training-now {
+      border-color: var(--work-color);
+      background: var(--card-active);
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .category-badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: #334155;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    .select-checkbox {
+      transform: scale(1.2);
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .svg-container {
+      width: 100%;
+      height: 140px;
+      background: #080d1a;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .svg-container svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .exercise-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .muscle-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .muscle-tag {
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .instruction {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: auto;
+    }
+
+    /* 計時器控制面板 */
+    .timer-panel {
+      background: var(--panel-bg);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .status-pill {
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .status-idle { background: #334155; color: var(--text-muted); }
+    .status-work { background: rgba(244, 63, 94, 0.2); color: var(--work-color); border: 1px solid var(--work-color); }
+    .status-rest { background: rgba(16, 185, 129, 0.2); color: var(--rest-color); border: 1px solid var(--rest-color); }
+
+    .timer-display {
+      font-size: 4.5rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      margin: 8px 0;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+
+    .current-exercise-banner {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      min-height: 28px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .timer-settings {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+      background: #111a2e;
+      padding: 14px;
+      border-radius: 10px;
+    }
+
+    .setting-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .setting-item label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .setting-item input {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-start {
+      background: var(--accent);
+      color: #0b1329;
+    }
+
+    .btn-start:hover {
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-reset {
+      background: #334155;
+      color: #f8fafc;
+    }
+
+    .btn-reset:hover {
+      background: #475569;
+    }
+
+    .queue-info {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    /* 頁尾版本指紋 */
+    footer {
+      margin-top: 40px;
+      padding: 16px 0;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      width: 100%;
+      max-width: 1240px;
+    }
+
+    .version-fingerprint {
+      display: inline-block;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      color: #64748b;
+      background: #0f172a;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px dashed #334155;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>⚡ Sport-Fit</h1>
+    <p>全方位啞鈴肌力鍛鍊 × 智能間歇訓練助手</p>
+  </header>
+
+  <!-- 部位篩選 -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCategory('all', this)">全部動作 (8)</button>
+    <button class="filter-btn" onclick="filterCategory('arms', this)">💪 手臂 (Arms)</button>
+    <button class="filter-btn" onclick="filterCategory('shoulders', this)">🏋️ 肩膀 (Shoulders)</button>
+    <button class="filter-btn" onclick="filterCategory('legs', this)">🦵 腿部 (Legs)</button>
+    <button class="filter-btn" onclick="filterCategory('core', this)">🔥 腹部核心 (Abs)</button>
+  </div>
+
+  <div class="main-layout">
+    <!-- 動作列表 -->
+    <div class="exercise-grid" id="exerciseGrid"></div>
+
+    <!-- 間歇計時控制面板 -->
+    <div class="timer-panel">
+      <div id="statusPill" class="status-pill status-idle">準備中</div>
+      <div id="timeDisplay" class="timer-display">00:30</div>
+      <div id="currentExName" class="current-exercise-banner">勾選動作後開始訓練</div>
+
+      <div class="timer-settings">
+        <div class="setting-item">
+          <label>動作秒數 (Work)</label>
+          <input type="number" id="workTime" value="30" min="5" max="300">
+        </div>
+        <div class="setting-item">
+          <label>休息秒數 (Rest)</label>
+          <input type="number" id="restTime" value="15" min="0" max="180">
+        </div>
+        <div class="setting-item" style="grid-column: span 2;">
+          <label>循環組數 (Total Sets)</label>
+          <input type="number" id="setCount" value="3" min="1" max="10">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="startBtn" class="btn-start" onclick="toggleTimer()">開始訓練</button>
+        <button id="resetBtn" class="btn-reset" onclick="resetTimer()">重置</button>
+      </div>
+
+      <div class="queue-info" id="queueInfo">已選擇 8 個動作加入循環</div>
+    </div>
+  </div>
+
+  <!-- 頁尾版本指紋識別 -->
+  <footer>
+    <div class="version-fingerprint">Fingerprint: SF-00001 | Build: 2026.09.01</div>
+  </footer>
+
+  <script>
+    // 啞鈴全系列動作庫資料
+    const exerciseData = [
+      {
+        id: "arm_curl",
+        category: "arms",
+        categoryName: "手臂",
+        title: "啞鈴二頭彎舉 (Biceps Curl)",
+        muscles: ["肱二頭肌", "前臂肌群"],
+        desc: "手握啞鈴垂於兩側，手肘貼近軀幹，專注二頭肌發力將啞鈴收起至胸前。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="95" cy="22" r="9" fill="#38bdf8"/>
+          <path d="M95,31 L95,70 L80,115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M95,70 L110,115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M95,38 L115,55 L108,40" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <rect x="100" y="32" width="16" height="8" rx="2" fill="#94a3b8"/>
+          <circle cx="112" cy="46" r="6" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "arm_tri",
+        category: "arms",
+        categoryName: "手臂",
+        title: "啞鈴頸後臂屈伸 (Triceps Extension)",
+        muscles: ["肱三頭肌", "上背穩定"],
+        desc: "雙手持啞鈴舉過頭頂，大臂固定於耳側，手肘彎曲將啞鈴下放至頸後再伸直。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="100" cy="35" r="9" fill="#38bdf8"/>
+          <path d="M100,44 L100,85 L85,120" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,85 L115,120" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,48 L108,22 L98,18" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <rect x="90" y="10" width="16" height="8" rx="2" fill="#94a3b8"/>
+          <circle cx="106" cy="28" r="6" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "sh_press",
+        category: "shoulders",
+        categoryName: "肩膀",
+        title: "啞鈴肩推 (Shoulder Press)",
+        muscles: ["前三角肌", "中三角肌", "三頭肌"],
+        desc: "雙手持啞鈴於肩旁，核心收緊挺胸，垂直向上推舉至手臂接近打直。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="100" cy="30" r="9" fill="#38bdf8"/>
+          <path d="M100,39 L100,80 L88,120" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,80 L112,120" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,45 L80,30 L80,14" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path d="M100,45 L120,30 L120,14" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="72" y="8" width="16" height="6" rx="2" fill="#94a3b8"/>
+          <rect x="112" y="8" width="16" height="6" rx="2" fill="#94a3b8"/>
+          <circle cx="86" cy="42" r="6" fill="#f43f5e"/>
+          <circle cx="114" cy="42" r="6" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "sh_raise",
+        category: "shoulders",
+        categoryName: "肩膀",
+        title: "啞鈴側平舉 (Lateral Raise)",
+        muscles: ["側三角肌", "斜方肌"],
+        desc: "身體微前傾，手肘微屈，向身體兩側平舉至與肩同高，感受肩側受力。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="100" cy="28" r="9" fill="#38bdf8"/>
+          <path d="M100,37 L100,78 L85,120" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,78 L115,120" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,44 L60,42 L45,46" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path d="M100,44 L140,42 L155,46" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="36" y="42" width="10" height="12" rx="2" fill="#94a3b8"/>
+          <rect x="154" y="42" width="10" height="12" rx="2" fill="#94a3b8"/>
+          <circle cx="88" cy="43" r="6" fill="#f43f5e"/>
+          <circle cx="112" cy="43" r="6" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "leg_squat",
+        category: "legs",
+        categoryName: "腿部",
+        title: "高腳杯深蹲 (Goblet Squat)",
+        muscles: ["股四頭肌", "臀大肌", "核心"],
+        desc: "雙手捧住單個啞鈴於胸前，雙腳微寬於肩，臀部後坐下蹲至大腿與地面平行。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="85" cy="30" r="9" fill="#38bdf8"/>
+          <path d="M85,39 L80,68 L60,88 L50,115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M80,68 L98,88 L90,115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M85,44 L95,54" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="94" y="48" width="12" height="14" rx="2" fill="#94a3b8"/>
+          <circle cx="72" cy="78" r="7" fill="#f43f5e"/>
+          <circle cx="88" cy="85" r="7" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "leg_lunge",
+        category: "legs",
+        categoryName: "腿部",
+        title: "啞鈴弓箭步 (Dumbbell Lunges)",
+        muscles: ["股四頭肌", "臀大肌", "腿後側"],
+        desc: "雙手各持啞鈴自然下垂，單腳向前跨步下蹲至雙膝各呈 90 度後推回。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="100" cy="25" r="9" fill="#38bdf8"/>
+          <path d="M100,34 L95,68 L125,88 L125,115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M95,68 L68,85 L68,115" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M100,40 L100,65" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="94" y="60" width="12" height="8" rx="2" fill="#94a3b8"/>
+          <circle cx="120" cy="85" r="7" fill="#f43f5e"/>
+          <circle cx="92" cy="70" r="7" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "core_twist",
+        category: "core",
+        categoryName: "腹部核心",
+        title: "啞鈴俄羅斯轉體 (Russian Twist)",
+        muscles: ["腹斜肌", "腹直肌", "深層核心"],
+        desc: "坐於地面雙腳離地，雙手持啞鈴於胸前，轉動軀幹將啞鈴交替碰觸身體兩側。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="75" cy="40" r="9" fill="#38bdf8"/>
+          <path d="M75,49 L88,85 L125,75 L145,95" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M78,56 L100,68" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="98" y="64" width="14" height="10" rx="2" fill="#94a3b8"/>
+          <circle cx="85" cy="70" r="7" fill="#f43f5e"/>
+        </svg>`
+      },
+      {
+        id: "core_crunch",
+        category: "core",
+        categoryName: "腹部核心",
+        title: "啞鈴負重捲腹 (Weighted Crunch)",
+        muscles: ["腹直肌上部", "核心肌群"],
+        desc: "仰臥屈膝，雙手持啞鈴於胸前或上方，利用腹肌力量收縮抬起上背部。",
+        svg: `<svg viewBox="0 0 200 130">
+          <circle cx="55" cy="72" r="9" fill="#38bdf8"/>
+          <path d="M55,81 L85,92 L120,92 L135,70 L150,92" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M70,86 L80,60" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <rect x="74" y="52" width="12" height="10" rx="2" fill="#94a3b8"/>
+          <circle cx="95" cy="85" r="7" fill="#f43f5e"/>
+        </svg>`
+      }
+    ];
+
+    // 狀態變數
+    let activeCategory = 'all';
+    let selectedExerciseIds = exerciseData.map(e => e.id);
+    let currentQueue = [];
+    let currentSet = 1;
+    let currentExIdx = 0;
+    let isWorking = true;
+    let isRunning = false;
+    let timerInterval = null;
+    let timeLeft = 30;
+
+    // 音效 (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 600, duration = 0.15) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // 渲染動作清單
+    function renderExerciseList() {
+      const grid = document.getElementById('exerciseGrid');
+      grid.innerHTML = '';
+
+      exerciseData.forEach(ex => {
+        if (activeCategory !== 'all' && ex.category !== activeCategory) return;
+
+        const isChecked = selectedExerciseIds.includes(ex.id);
+        const card = document.createElement('div');
+        card.className = 'exercise-card';
+        card.id = `card-${ex.id}`;
+
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="category-badge">${ex.categoryName}</span>
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; cursor:pointer;">
+              <span>加入訓練</span>
+              <input type="checkbox" class="select-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSelect('${ex.id}', this.checked)">
+            </label>
+          </div>
+          <div class="svg-container">${ex.svg}</div>
+          <div class="exercise-title">${ex.title}</div>
+          <div class="muscle-tags">
+            ${ex.muscles.map(m => `<span class="muscle-tag">${m}</span>`).join('')}
+          </div>
+          <div class="instruction">${ex.desc}</div>
+        `;
+        grid.appendChild(card);
+      });
+
+      updateQueueInfo();
+    }
+
+    function filterCategory(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderExerciseList();
+      highlightActiveCard();
+    }
+
+    function toggleSelect(id, checked) {
+      if (checked) {
+        if (!selectedExerciseIds.includes(id)) selectedExerciseIds.push(id);
+      } else {
+        selectedExerciseIds = selectedExerciseIds.filter(i => i !== id);
+      }
+      updateQueueInfo();
+    }
+
+    function updateQueueInfo() {
+      document.getElementById('queueInfo').innerText = `已選擇 ${selectedExerciseIds.length} 個動作加入循環`;
+    }
+
+    function highlightActiveCard() {
+      document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('training-now'));
+      if (isRunning && isWorking && currentQueue.length > 0) {
+        const currentEx = currentQueue[currentExIdx];
+        if (currentEx) {
+          const card = document.getElementById(`card-${currentEx.id}`);
+          if (card) card.classList.add('training-now');
+        }
+      }
+    }
+
+    // 計時器邏輯
+    function updateDisplay() {
+      const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      const sec = String(timeLeft % 60).padStart(2, '0');
+      document.getElementById('timeDisplay').innerText = `${min}:${sec}`;
+
+      const pill = document.getElementById('statusPill');
+      const banner = document.getElementById('currentExName');
+      const totalSets = document.getElementById('setCount').value;
+
+      if (!isRunning && timeLeft === parseInt(document.getElementById('workTime').value)) {
+        pill.className = 'status-pill status-idle';
+        pill.innerText = '準備中';
+        banner.innerText = selectedExerciseIds.length > 0 ? '點擊開始進行訓練' : '請至少勾選 1 個動作';
+        return;
+      }
+
+      if (isWorking) {
+        pill.className = 'status-pill status-work';
+        pill.innerText = `訓練中 (${currentSet}/${totalSets} 組)`;
+        banner.innerText = currentQueue[currentExIdx] ? currentQueue[currentExIdx].title : '';
+      } else {
+        pill.className = 'status-pill status-rest';
+        pill.innerText = `休息時間 (${currentSet}/${totalSets} 組)`;
+        const nextEx = (currentExIdx + 1 < currentQueue.length)
+          ? currentQueue[currentExIdx + 1].title
+          : (currentSet < totalSets ? currentQueue[0].title : '即將結束');
+        banner.innerText = `下一動作：${nextEx}`;
+      }
+    }
+
+    function toggleTimer() {
+      if (selectedExerciseIds.length === 0) {
+        alert('請先在清單中至少勾選一個訓練動作！');
+        return;
+      }
+
+      if (isRunning) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        document.getElementById('startBtn').innerText = '繼續訓練';
+      } else {
+        if (currentQueue.length === 0) {
+          currentQueue = exerciseData.filter(e => selectedExerciseIds.includes(e.id));
+        }
+        isRunning = true;
+        document.getElementById('startBtn').innerText = '暫停';
+        timerInterval = setInterval(tick, 1000);
+      }
+      highlightActiveCard();
+    }
+
+    function tick() {
+      if (timeLeft > 0) {
+        if (timeLeft <= 3) playBeep(520, 0.1); // 倒數 3 秒提示
+        timeLeft--;
+        updateDisplay();
+      } else {
+        playBeep(880, 0.35); // 切換提示
+        const workSec = parseInt(document.getElementById('workTime').value) || 30;
+        const restSec = parseInt(document.getElementById('restTime').value) || 15;
+        const maxSets = parseInt(document.getElementById('setCount').value) || 3;
+
+        if (isWorking) {
+          if (restSec > 0) {
+            isWorking = false;
+            timeLeft = restSec;
+          } else {
+            advanceExercise(maxSets, workSec);
+          }
+        } else {
+          advanceExercise(maxSets, workSec);
+        }
+        highlightActiveCard();
+        updateDisplay();
+      }
+    }
+
+    function advanceExercise(maxSets, workSec) {
+      isWorking = true;
+      currentExIdx++;
+      if (currentExIdx >= currentQueue.length) {
+        currentExIdx = 0;
+        currentSet++;
+      }
+
+      if (currentSet > maxSets) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        alert('🎉 太棒了！已順利完成整組啞鈴間歇訓練！');
+        resetTimer();
+        return;
+      }
+      timeLeft = workSec;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+      currentSet = 1;
+      currentExIdx = 0;
+      isWorking = true;
+      currentQueue = exerciseData.filter(e => selectedExerciseIds.includes(e.id));
+      timeLeft = parseInt(document.getElementById('workTime').value) || 30;
+      document.getElementById('startBtn').innerText = '開始訓練';
+      highlightActiveCard();
+      updateDisplay();
+    }
+
+    // 初始化執行
+    renderExerciseList();
+    resetTimer();
+  </script>
+</body>
+</html>
